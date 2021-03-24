@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import axios from 'axios'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import './App.css'
+
+class App extends React.Component {
+  state = {
+    advice: ''
+  }
+
+  componentDidMount () {
+    this.fetchAdvice()
+  }
+
+  fetchAdvice = () => {
+    const id = Math.floor(Math.random() * 100) - 1
+    console.log(id)
+
+    axios
+      .get(`https://api.adviceslip.com/advice/${id}`)
+      .then(response => {
+        let data = JSON.parse(response.data + '}')
+
+        const { advice } = data.slip
+
+        this.setState({ advice })
+      })
+      .catch(error => {
+        this.setState(
+          'Until you make the unconscious conscious, it will direct your life and you will call it fate.'
+        )
+        console.log(error)
+      })
+  }
+
+  render () {
+    return (
+      <div className='app'>
+        <div className='card'>
+          <h1 className='heading'>{this.state.advice}</h1>
+          <button className='button' onClick={this.fetchAdvice}>
+            <span>GIVE ME ADVICE!</span>
+          </button>
+        </div>
+      </div>
+    )
+  }
 }
 
-export default App;
+export default App
